@@ -2,7 +2,7 @@
 
 All notable changes to `Filament AudioFeedback` will be documented in this file.
 
-## Unreleased
+## 1.2.0 - 2026-07-28
 
 - The Breezy "Sounds" profile section is now a fully native Filament form: `Toggle`, `Slider` (pip at the panel default + Reset hint action) and per-event `Select`s in a responsive `Grid`, saving server-side on every change
 - Selects warn when two events resolve to the same tune
