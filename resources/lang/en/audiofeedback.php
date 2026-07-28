@@ -6,7 +6,7 @@ return [
 
     'profile' => [
         'heading' => 'Sounds',
-        'description' => 'Tune the interface sounds. Saved in this browser only.',
+        'description' => 'Tune the interface sounds. Saved to your account.',
         'muted' => 'Mute all sounds',
         'volume' => 'Volume',
         'default' => 'Default (:sound)',

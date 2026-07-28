@@ -152,6 +152,8 @@ If your panel uses [Filament Breezy](https://github.com/jeffgreco13/filament-bre
 AudioFeedbackPlugin::make()->breezyProfileSection();
 ```
 
+![The Sounds section on Breezy's my-profile page](art/sound-settings.png)
+
 Each user gets a mute switch, a volume slider (with a marker and reset for the panel default), and a per-event sound picker — every sound can be re-mapped to any of the fourteen cues, muted, or left at the panel default, with an instant preview on selection. The section only appears when the `BreezyCore` plugin is registered on the same panel; hide it per-panel with Breezy's `->withoutMyProfileComponents(['audiofeedback'])`.
 
 Choices are saved to the `audiofeedback_settings` table (the migration ships with the package — just run `php artisan migrate`) via a small authenticated endpoint, so they follow the user across browsers. Guests and apps without the table gracefully fall back to `localStorage`.
