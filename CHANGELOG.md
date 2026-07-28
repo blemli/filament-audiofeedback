@@ -2,6 +2,19 @@
 
 All notable changes to `Filament AudioFeedback` will be documented in this file.
 
+## v1.2.0 - 2026-07-28
+
+### What's new
+
+- **Native Filament profile section** 🎛️ — the Breezy "Sounds" section is now a fully native Filament form: `Toggle`, `Slider` (with a pip marking the panel default and a Reset hint action) and per-event `Select`s in a responsive grid, saving server-side on every change with instant sound previews.
+- **Duplicate-tune warnings** — selects show a warning icon (message in a tooltip) when two events resolve to the same tune.
+- **Per-user guard** — `->breezyProfileSection(fn (?User $user) => ...)` gates the section per user via Breezy's `canView()`.
+- **Reduced motion** ♿ — users with the OS-level "reduce motion" preference start muted; an explicit unmute or saved setting wins, and `->ignoreReducedMotion()` disables the hint.
+- **Translations** 🌍 — German, French, Italian and Spanish ship alongside English.
+- CI now runs the supported Laravel 12/13 matrix and is fully green.
+
+**Full changelog**: https://github.com/blemli/filament-audiofeedback/compare/v1.1.0...v1.2.0
+
 ## 1.2.0 - 2026-07-28
 
 - The Breezy "Sounds" profile section is now a fully native Filament form: `Toggle`, `Slider` (pip at the panel default + Reset hint action) and per-event `Select`s in a responsive `Grid`, saving server-side on every change
