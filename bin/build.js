@@ -18,6 +18,7 @@ const defaultOptions = {
         'process.env.NODE_ENV': isDev ? `'development'` : `'production'`,
     },
     bundle: true,
+    format: 'iife',
     mainFields: ['module', 'main'],
     platform: 'neutral',
     sourcemap: isDev ? 'inline' : false,
@@ -46,7 +47,7 @@ const defaultOptions = {
 compile({
     ...defaultOptions,
     entryPoints: ['./resources/js/index.js'],
-    outfile: './resources/dist/skeleton.js',
+    outfile: './resources/dist/audiofeedback.js',
 }).then(() => {
-    console.log(`Build completed for skeleton.js`)
+    console.log(`Build completed for audiofeedback.js`)
 })

@@ -1,71 +1,165 @@
-# :package_description
+# Filament AudioFeedback
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
-[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3Arun-tests+branch%3Amain)
-[![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/:vendor_slug/:package_slug/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/:vendor_slug/:package_slug/actions?query=workflow%3A"Fix+PHP+code+styling"+branch%3Amain)
-[![Total Downloads](https://img.shields.io/packagist/dt/:vendor_slug/:package_slug.svg?style=flat-square)](https://packagist.org/packages/:vendor_slug/:package_slug)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/blemli/filament-audiofeedback.svg?style=flat-square)](https://packagist.org/packages/blemli/filament-audiofeedback)
+[![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/blemli/filament-audiofeedback/tests.yml?branch=5.x&label=tests&style=flat-square)](https://github.com/blemli/filament-audiofeedback/actions?query=workflow%3Atests+branch%3A5.x)
+[![Total Downloads](https://img.shields.io/packagist/dt/blemli/filament-audiofeedback.svg?style=flat-square)](https://packagist.org/packages/blemli/filament-audiofeedback)
 
-<!--delete-->
----
-This repo can be used to scaffold a Filament plugin. Follow these steps to get started:
+Delightful, unobtrusive audio feedback for Filament panels, powered by [Cuelume](https://cuelume-site.pages.dev) — fourteen tiny interaction sounds synthesized live with the Web Audio API. No audio files, no npm install, nothing to configure unless you want to.
 
-1. Press the "Use this template" button at the top of this repo to create a new repo with the contents of this skeleton.
-2. Run "php ./configure.php" to run a script that will replace all placeholders throughout all the files.
-3. Make something great!
----
-<!--/delete-->
-
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
+Deliberately not annoying: sounds play for toggles, notifications, form submits, sliders, login/logout, drag & drop, and a barely-there whisper on navigation hover. Users get a mute button, a master volume, and (optionally) their own per-sound settings on Filament Breezy's my-profile page — persisted to the database.
 
 ## Installation
 
-You can install the package via composer:
-
 ```bash
-composer require :vendor_slug/:package_slug
+composer require blemli/filament-audiofeedback
 ```
 
-> [!IMPORTANT]
-> If you have not set up a custom theme and are using Filament Panels follow the instructions in the [Filament Docs](https://filamentphp.com/docs/4.x/styling/overview#creating-a-custom-theme) first.
-
-After setting up a custom theme add the plugin's views to your theme css file or your app's css file if using the standalone packages.
-
-```css
-@source '../../../../vendor/:vendor_slug/:package_slug/resources/**/*.blade.php';
-```
-
-You can publish and run the migrations with:
-
-```bash
-php artisan vendor:publish --tag=":package_slug-migrations"
-php artisan migrate
-```
-
-You can publish the config file with:
-
-```bash
-php artisan vendor:publish --tag=":package_slug-config"
-```
-
-Optionally, you can publish the views using
-
-```bash
-php artisan vendor:publish --tag=":package_slug-views"
-```
-
-This is the contents of the published config file:
+Add the plugin to your panel — that's it:
 
 ```php
+use Blemli\AudioFeedback\AudioFeedbackPlugin;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->plugin(AudioFeedbackPlugin::make());
+}
+```
+
+The Cuelume engine (~10 kB, MIT) is bundled with the plugin and registered through Filament's asset system. No Filament views are overridden — everything hooks into Livewire events, DOM roles and render hooks.
+
+## What plays when
+
+Each event maps to the Cuelume sound designed for that exact moment:
+
+| Event | Default sound | Cuelume's description |
+| --- | --- | --- |
+| Notification (success) | `success` | Warm three-note confirmation |
+| Notification (danger) | `error` | Soft knock and descending refusal |
+| Notification (warning) | `chime` | Soft two-note ascending bell |
+| Notification (info / none) | `whisper` | Breathy quiet swell |
+| Toggle switched | `toggle` | Mechanical click-clack |
+| Toggle buttons changed | `toggle-buttons` → `tick` | Crisp instant tick |
+| Slider released / stepped | `slider` → `tick` | Crisp instant tick |
+| Navigation item hovered | `nav.hover` → `whisper` | The quietest option, made for dense lists |
+| Form submitted | `loading` | Brief unresolved rising shimmer |
+| Login | `ready` | Focus tick with a harmonic bloom |
+| Logout | `droplet` | Single note gliding down |
+| Drag (grab a sortable item) | `press` | Dull muted knock |
+| Drop (release it) | `release` | Brighter springy tick |
+
+## Configuration
+
+Publish the config file if you want to change anything:
+
+```bash
+php artisan vendor:publish --tag="audiofeedback-config"
+```
+
+```php
+// config/audiofeedback.php
 return [
+    'enabled' => env('AUDIOFEEDBACK_ENABLED', true),
+
+    // Master volume, 0–100. Users can pick their own (see below).
+    'volume' => 50,
+
+    // The mute button is shown by default; opt out with false.
+    'mute_toggle' => true,
+
+    // 'topbar-start', 'topbar-end', 'user-menu-before' or 'user-menu'.
+    'mute_toggle_position' => 'user-menu-before',
+
+    // Opt in to a per-user "Sounds" section on Breezy's my-profile page.
+    'breezy_profile_section' => false,
+
+    // Any of: chime, sparkle, droplet, bloom, whisper, tick, press,
+    // release, toggle, success, error, page, loading, ready — or false.
+    'sounds' => [
+        'notification.success' => 'success',
+        'toggle' => 'toggle',
+        'nav.hover' => false, // silence a single event
+        // ...
+    ],
 ];
 ```
 
-## Usage
+The same options are available fluently on the plugin:
 
 ```php
-$variable = new VendorName\Skeleton();
-echo $variable->echoPhrase('Hello, VendorName!');
+AudioFeedbackPlugin::make()
+    ->volume(25)
+    ->sound('toggle', 'tick')
+    ->disable('form.submit', 'drag', 'drop')
+    ->muteToggle(position: 'topbar-end');
 ```
+
+Or globally from your `AppServiceProvider`:
+
+```php
+use Blemli\AudioFeedback\AudioFeedbackPlugin;
+
+public function boot(): void
+{
+    AudioFeedbackPlugin::configureUsing(
+        fn (AudioFeedbackPlugin $plugin) => $plugin->sound('login', 'bloom'),
+    );
+}
+```
+
+Precedence: config file → `configureUsing()` → fluent calls in the panel provider.
+
+## Notifications
+
+Notifications automatically play the sound matching their status. Override or silence a single notification:
+
+```php
+Notification::make()
+    ->title('Saved')
+    ->success()
+    ->sound('sparkle') // override the status sound
+    ->send();
+
+Notification::make()
+    ->title('Autosaved')
+    ->silent() // no sound for this one
+    ->send();
+```
+
+## Mute button
+
+A small speaker icon lets every user opt out. It is shown by default (opt out with `->muteToggle(false)`) and can live in four places, matching Filament's render hooks:
+
+```php
+use Blemli\AudioFeedback\MuteTogglePosition;
+
+AudioFeedbackPlugin::make()->muteToggle(position: MuteTogglePosition::UserMenu);
+```
+
+| Position | Where |
+| --- | --- |
+| `topbar-start` | Start of the topbar, after the logo |
+| `topbar-end` | End of the topbar, before the user menu area |
+| `user-menu-before` | Next to the user avatar (default) |
+| `user-menu` | An item inside the user dropdown |
+
+## Per-user settings (Filament Breezy)
+
+If your panel uses [Filament Breezy](https://github.com/jeffgreco13/filament-breezy), opt in to a "Sounds" section on the my-profile page:
+
+```php
+AudioFeedbackPlugin::make()->breezyProfileSection();
+```
+
+Each user gets a mute switch, a volume slider (with a marker and reset for the panel default), and a per-event sound picker — every sound can be re-mapped to any of the fourteen cues, muted, or left at the panel default, with an instant preview on selection. The section only appears when the `BreezyCore` plugin is registered on the same panel; hide it per-panel with Breezy's `->withoutMyProfileComponents(['audiofeedback'])`.
+
+Choices are saved to the `audiofeedback_settings` table (the migration ships with the package — just run `php artisan migrate`) via a small authenticated endpoint, so they follow the user across browsers. Guests and apps without the table gracefully fall back to `localStorage`.
+
+## Extras
+- **Your own sounds** — the script also honors plain Cuelume attributes in your views (`<button data-cuelume-press>`), and exposes `window.audiofeedback.cue('toggle')` / `window.audiofeedback.play('sparkle')` for custom JS.
+- **Autoplay policy** — browsers block audio before the first user interaction on a page. Cues that arrive earlier (e.g. right after the login redirect) are held and played on the first click or keypress.
+- **OS Do Not Disturb** — browsers don't expose Focus/DND state to web pages, so it can't be respected directly; the mute button is the closest equivalent.
 
 ## Testing
 
@@ -73,22 +167,10 @@ echo $variable->echoPhrase('Hello, VendorName!');
 composer test
 ```
 
-## Changelog
-
-Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed recently.
-
-## Contributing
-
-Please see [CONTRIBUTING](.github/CONTRIBUTING.md) for details.
-
-## Security Vulnerabilities
-
-Please review [our security policy](.github/SECURITY.md) on how to report security vulnerabilities.
-
 ## Credits
 
-- [:author_name](https://github.com/:author_username)
-- [All Contributors](../../contributors)
+- [Cuelume](https://github.com/Danilaa1/cuelume) by Daniel Belyi — the sound palette (MIT)
+- [grafst](https://github.com/grafst)
 
 ## License
 

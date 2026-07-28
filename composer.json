@@ -1,24 +1,24 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "blemli/filament-audiofeedback",
+    "description": "Delightful, unobtrusive audio feedback for Filament panels, powered by Cuelume.",
     "keywords": [
-        ":vendor_name",
+        "blemli",
         "laravel",
         "filamentphp",
         "filament",
         "filament-plugin",
-        ":package_slug"
+        "filament-audiofeedback"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/blemli/filament-audiofeedback",
     "support": {
-        "issues": "https://github.com/:vendor_slug/:package_slug/issues",
-        "source": "https://github.com/:vendor_slug/:package_slug"
+        "issues": "https://github.com/blemli/filament-audiofeedback/issues",
+        "source": "https://github.com/blemli/filament-audiofeedback"
     },
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "grafst",
+            "email": "konto@problem.li",
             "role": "Developer"
         }
     ],
@@ -30,6 +30,7 @@
         "spatie/laravel-package-tools": "^1.15.0"
     },
     "require-dev": {
+        "jeffgreco13/filament-breezy": "^3.2",
         "larastan/larastan": "^3.0",
         "laravel/pint": "^1.0",
         "nunomaduro/collision": "^8.0",
@@ -43,13 +44,12 @@
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src/",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories/"
+            "Blemli\\AudioFeedback\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests/"
+            "Blemli\\AudioFeedback\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -64,11 +64,8 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
-            ],
-            "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
-            }
+                "Blemli\\AudioFeedback\\AudioFeedbackServiceProvider"
+            ]
         }
     },
     "config": {
@@ -80,5 +77,8 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "suggest": {
+        "jeffgreco13/filament-breezy": "Adds a per-user Sounds section to Breezy's my-profile page"
+    }
 }
