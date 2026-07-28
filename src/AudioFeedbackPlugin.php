@@ -32,6 +32,8 @@ class AudioFeedbackPlugin implements Plugin
 
     protected ?bool $breezyProfileSection = null;
 
+    protected ?bool $ignoreReducedMotion = null;
+
     /** @var array<string, string | false> */
     protected array $sounds = [];
 
@@ -111,6 +113,22 @@ class AudioFeedbackPlugin implements Plugin
         $this->volume = $volume;
 
         return $this;
+    }
+
+    /**
+     * Users with the OS-level "reduce motion" preference start muted (they
+     * can still unmute themselves). Call this to ignore that hint.
+     */
+    public function ignoreReducedMotion(bool $condition = true): static
+    {
+        $this->ignoreReducedMotion = $condition;
+
+        return $this;
+    }
+
+    public function ignoresReducedMotion(): bool
+    {
+        return $this->ignoreReducedMotion ?? (bool) config('audiofeedback.ignore_reduced_motion', false);
     }
 
     /**
@@ -248,6 +266,7 @@ class AudioFeedbackPlugin implements Plugin
             'audiofeedback' => [
                 'sounds' => array_filter($this->getSounds()),
                 'volume' => $this->getVolume(),
+                'ignoreReducedMotion' => $this->ignoresReducedMotion(),
             ],
         ], 'blemli/filament-audiofeedback');
 

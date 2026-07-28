@@ -97,6 +97,13 @@ function setOverride(event, sound) {
     syncUser({ overrides })
 }
 
+// The OS-level "reduce motion" preference doubles as a calm-interface
+// signal, so it mutes by default — until the user explicitly unmutes, or
+// the panel opts out via ->ignoreReducedMotion().
+const prefersReducedMotion = () =>
+    ! (data().ignoreReducedMotion ?? false) &&
+    (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false)
+
 function isMuted() {
     const user = userSettings()
 
@@ -105,17 +112,22 @@ function isMuted() {
     }
 
     try {
-        return localStorage.getItem(MUTED_STORAGE_KEY) === '1'
+        const stored = localStorage.getItem(MUTED_STORAGE_KEY)
+
+        // '0' is an explicit unmute, which outranks the OS hint.
+        if (stored === '1' || stored === '0') {
+            return stored === '1'
+        }
     } catch {
-        return false
+        //
     }
+
+    return prefersReducedMotion()
 }
 
 function setMuted(muted) {
     try {
-        muted
-            ? localStorage.setItem(MUTED_STORAGE_KEY, '1')
-            : localStorage.removeItem(MUTED_STORAGE_KEY)
+        localStorage.setItem(MUTED_STORAGE_KEY, muted ? '1' : '0')
     } catch {
         //
     }
@@ -425,6 +437,12 @@ function observeInteractions() {
 function init() {
     setEnabled(! isMuted())
     applyVolume()
+
+    // React live when the OS reduce-motion preference flips.
+    window.matchMedia?.('(prefers-reduced-motion: reduce)').addEventListener?.('change', () => {
+        setEnabled(! isMuted())
+        window.dispatchEvent(new CustomEvent('audiofeedback:muted', { detail: { muted: isMuted() } }))
+    })
 
     observeNotifications()
     observeInteractions()

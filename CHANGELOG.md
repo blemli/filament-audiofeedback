@@ -2,6 +2,11 @@
 
 All notable changes to `Filament AudioFeedback` will be documented in this file.
 
+## Unreleased
+
+- Users with the OS-level "reduce motion" preference now start muted (an explicit unmute or saved per-user setting still wins); ignore the hint with `->ignoreReducedMotion()` or `'ignore_reduced_motion' => true`
+- Fixed CI: test/phpstan matrices now match the supported Laravel 12/13 range, and the changelog workflow targets the `5.x` branch
+
 ## 1.1.0 - 2026-07-28
 
 - New `delete` event (default: `droplet`): delete and force-delete actions — including bulk — play it through their success notification instead of the generic success chime

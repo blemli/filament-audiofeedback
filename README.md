@@ -167,6 +167,7 @@ Each user gets a mute switch, a volume slider (with a marker and reset for the p
 Choices are saved to the `audiofeedback_settings` table (the migration ships with the package — just run `php artisan migrate`) via a small authenticated endpoint, so they follow the user across browsers. Guests and apps without the table gracefully fall back to `localStorage`.
 
 ## Extras
+- **Reduced motion** — users with the OS-level "reduce motion" accessibility preference start muted; an explicit unmute (or saved per-user setting) still wins. Opt out of the hint with `->ignoreReducedMotion()` or `'ignore_reduced_motion' => true`.
 - **Your own sounds** — the script also honors plain Cuelume attributes in your views (`<button data-cuelume-press>`), and exposes `window.audiofeedback.cue('toggle')` / `window.audiofeedback.play('sparkle')` for custom JS.
 - **Autoplay policy** — browsers block audio before the first user interaction on a page. Cues that arrive earlier (e.g. right after the login redirect) are held and played on the first click or keypress.
   

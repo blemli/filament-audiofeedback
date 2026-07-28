@@ -21,6 +21,11 @@ return [
     // inside the user dropdown).
     'mute_toggle_position' => 'user-menu-before',
 
+    // Users with the OS-level "reduce motion" accessibility preference
+    // start muted (they can still unmute themselves). Set to true to
+    // ignore that hint.
+    'ignore_reduced_motion' => false,
+
     // Opt in to a "Sounds" section on Filament Breezy's my-profile page.
     // Per-user choices are stored in the audiofeedback_settings table
     // (migration ships with the package) with a localStorage fallback.

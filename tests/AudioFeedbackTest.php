@@ -130,6 +130,15 @@ it('marks silent notifications as off', function () {
         ->toMatchArray(['quiet-notification' => 'off']);
 });
 
+it('honors reduced motion unless told otherwise', function () {
+    expect(AudioFeedbackPlugin::make()->ignoresReducedMotion())->toBeFalse()
+        ->and(AudioFeedbackPlugin::make()->ignoreReducedMotion()->ignoresReducedMotion())->toBeTrue();
+
+    config()->set('audiofeedback.ignore_reduced_motion', true);
+
+    expect(AudioFeedbackPlugin::make()->ignoresReducedMotion())->toBeTrue();
+});
+
 it('keeps the breezy profile section opt-in', function () {
     expect(AudioFeedbackPlugin::make()->hasBreezyProfileSection())->toBeFalse()
         ->and(AudioFeedbackPlugin::make()->breezyProfileSection()->hasBreezyProfileSection())->toBeTrue();
