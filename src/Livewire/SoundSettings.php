@@ -87,11 +87,11 @@ class SoundSettings extends MyProfileComponent
         $default = $this->getDefaultVolume();
 
         return Slider::make('volume')
-            ->label(__('audiofeedback::audiofeedback.profile.volume') . ' (%)')
+            ->label(__('audiofeedback::audiofeedback.profile.volume'))
+            ->required(false) // Slider::setUp() marks itself required
             ->range(0, 100)
             ->step(5)
             ->fillTrack()
-            ->tooltips()
             ->pips(PipsMode::Values)
             ->pipsValues([$default])
             ->live()
@@ -143,9 +143,13 @@ class SoundSettings extends MyProfileComponent
                         $this->dispatch('audiofeedback-preview', sound: $audible);
                     }
                 })
-                ->hint(fn (): ?string => $this->getDuplicateHint($event))
+                // Icon-only with a tooltip: inline hint text would stretch
+                // grid cells unevenly.
                 ->hintColor('warning')
-                ->hintIcon(fn (): ?Heroicon => $this->getDuplicateHint($event) ? Heroicon::ExclamationTriangle : null);
+                ->hintIcon(
+                    fn (): ?Heroicon => $this->getDuplicateHint($event) ? Heroicon::ExclamationTriangle : null,
+                    tooltip: fn (): ?string => $this->getDuplicateHint($event),
+                );
         }
 
         return $components;
