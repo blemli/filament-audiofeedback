@@ -49,7 +49,7 @@ class SoundSettings extends MyProfileComponent
             $overrides[static::formKey($event)] = $sound;
         }
 
-        $this->form->fill([
+        $this->getForm('form')?->fill([
             'muted' => $settings['muted'] ?? false,
             'volume' => $settings['volume'] ?? $this->getDefaultVolume(),
             'overrides' => $overrides,
