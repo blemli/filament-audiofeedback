@@ -30,7 +30,7 @@ class AudioFeedbackPlugin implements Plugin
 
     protected int | float | null $volume = null;
 
-    protected ?bool $breezyProfileSection = null;
+    protected bool | Closure | null $breezyProfileSection = null;
 
     protected ?bool $ignoreReducedMotion = null;
 
@@ -133,9 +133,12 @@ class AudioFeedbackPlugin implements Plugin
 
     /**
      * Opt in to a "Sounds" section on Filament Breezy's my-profile page,
-     * where each user can pick, mute or re-map every sound.
+     * where each user can pick, mute or re-map every sound. Pass a closure
+     * to guard it per user — it receives the authenticated user:
+     *
+     *     ->breezyProfileSection(fn (?User $user) => $user?->can('tune-sounds') ?? false)
      */
-    public function breezyProfileSection(bool $condition = true): static
+    public function breezyProfileSection(bool | Closure $condition = true): static
     {
         $this->breezyProfileSection = $condition;
 
@@ -199,9 +202,27 @@ class AudioFeedbackPlugin implements Plugin
         return min(1.0, max(0.0, $volume <= 1 ? (float) $volume : $volume / 100));
     }
 
+    /**
+     * Whether to register the section at all (a per-user closure counts as
+     * enabled — it is decided later, per user, in shouldShowBreezyProfileSection()).
+     */
     public function hasBreezyProfileSection(): bool
     {
-        return $this->breezyProfileSection ?? (bool) config('audiofeedback.breezy_profile_section', false);
+        $condition = $this->breezyProfileSection ?? (bool) config('audiofeedback.breezy_profile_section', false);
+
+        return $condition instanceof Closure || $condition;
+    }
+
+    /**
+     * Render-time, per-user visibility — backs SoundSettings::canView().
+     */
+    public function shouldShowBreezyProfileSection(): bool
+    {
+        $condition = $this->breezyProfileSection ?? (bool) config('audiofeedback.breezy_profile_section', false);
+
+        return $condition instanceof Closure
+            ? (bool) $condition(Filament::auth()->user())
+            : $condition;
     }
 
     /**

@@ -4,6 +4,10 @@ All notable changes to `Filament AudioFeedback` will be documented in this file.
 
 ## Unreleased
 
+- The Breezy "Sounds" profile section is now a fully native Filament form: `Toggle`, `Slider` (pip at the panel default + Reset hint action) and per-event `Select`s in a responsive `Grid`, saving server-side on every change
+- Selects warn when two events resolve to the same tune
+- `->breezyProfileSection()` accepts a closure to guard the section per user (receives the authenticated user)
+- German, French, Italian and Spanish translations
 - Users with the OS-level "reduce motion" preference now start muted (an explicit unmute or saved per-user setting still wins); ignore the hint with `->ignoreReducedMotion()` or `'ignore_reduced_motion' => true`
 - Fixed CI: test/phpstan matrices now match the supported Laravel 12/13 range, and the changelog workflow targets the `5.x` branch
 

@@ -12,6 +12,7 @@ return [
         'default' => 'Standard (:sound)',
         'off' => 'Aus',
         'reset' => 'Zurücksetzen',
+        'duplicate' => 'Gleicher Ton wie: :events',
     ],
 
     'events' => [

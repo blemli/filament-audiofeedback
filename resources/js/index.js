@@ -135,8 +135,9 @@ function setMuted(muted) {
     setEnabled(! muted)
     syncUser({ muted })
 
-    // Keeps every mute control (topbar button, profile checkbox) in sync.
+    // Keeps every mute control (topbar button, profile form) in sync.
     window.dispatchEvent(new CustomEvent('audiofeedback:muted', { detail: { muted } }))
+    window.Livewire?.dispatch('audiofeedback-muted-changed', { muted })
 }
 
 // For logged-in users, mirror each change onto filamentData (so later reads
@@ -442,6 +443,31 @@ function init() {
     window.matchMedia?.('(prefers-reduced-motion: reduce)').addEventListener?.('change', () => {
         setEnabled(! isMuted())
         window.dispatchEvent(new CustomEvent('audiofeedback:muted', { detail: { muted: isMuted() } }))
+    })
+
+    // The Breezy profile form saves server-side and reports back here.
+    window.addEventListener('audiofeedback-settings-updated', (event) => {
+        const settings = event.detail?.settings
+
+        if (! settings) {
+            return
+        }
+
+        const shared = window.filamentData?.audiofeedback
+
+        if (shared) {
+            shared.user = settings
+        }
+
+        setEnabled(! isMuted())
+        applyVolume()
+        window.dispatchEvent(new CustomEvent('audiofeedback:muted', { detail: { muted: isMuted() } }))
+    })
+
+    window.addEventListener('audiofeedback-preview', (event) => {
+        if (event.detail?.sound) {
+            preview(event.detail.sound)
+        }
     })
 
     observeNotifications()

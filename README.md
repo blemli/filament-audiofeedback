@@ -162,9 +162,17 @@ AudioFeedbackPlugin::make()->breezyProfileSection();
 
 ![The Sounds section on Breezy's my-profile page](art/sound-settings.png)
 
-Each user gets a mute switch, a volume slider (with a marker and reset for the panel default), and a per-event sound picker — every sound can be re-mapped to any of the fourteen cues, muted, or left at the panel default, with an instant preview on selection. The section only appears when the `BreezyCore` plugin is registered on the same panel; hide it per-panel with Breezy's `->withoutMyProfileComponents(['audiofeedback'])`.
+The section is a native Filament form: a `Toggle` to mute everything, a `Slider` for the volume (with a pip marking the panel default and a Reset hint action), and a `Select` per event — every sound can be re-mapped to any of the fourteen cues, muted, or left at the panel default, with an instant preview on selection. When two events resolve to the same tune, the affected selects show a warning hint. The section only appears when the `BreezyCore` plugin is registered on the same panel; hide it per-panel with Breezy's `->withoutMyProfileComponents(['audiofeedback'])`.
 
-Choices are saved to the `audiofeedback_settings` table (the migration ships with the package — just run `php artisan migrate`) via a small authenticated endpoint, so they follow the user across browsers. Guests and apps without the table gracefully fall back to `localStorage`.
+To guard the section per user, pass a closure — it receives the authenticated user:
+
+```php
+AudioFeedbackPlugin::make()->breezyProfileSection(
+    fn (?User $user) => $user?->can('tune-sounds') ?? false,
+);
+```
+
+Choices are saved to the `audiofeedback_settings` table (the migration ships with the package — just run `php artisan migrate`) and hydrated on every page, so they follow the user across browsers. The topbar mute button persists through a small authenticated endpoint; guests and apps without the table gracefully fall back to `localStorage`.
 
 ## Translations
 

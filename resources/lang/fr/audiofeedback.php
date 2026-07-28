@@ -12,6 +12,7 @@ return [
         'default' => 'Par défaut (:sound)',
         'off' => 'Désactivé',
         'reset' => 'Réinitialiser',
+        'duplicate' => 'Même son que :events',
     ],
 
     'events' => [

@@ -19,6 +19,7 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
+use Jeffgreco13\FilamentBreezy\Livewire\MyProfileComponent;
 use Spatie\LaravelPackageTools\Commands\InstallCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -72,6 +73,12 @@ class AudioFeedbackServiceProvider extends PackageServiceProvider
         static::registerNotificationMacros();
         static::registerDeleteCues();
         $this->registerAuthCues();
+
+        // The Breezy profile section is a Livewire component; without an
+        // alias, its updates 404 into Livewire's release-token 419.
+        if (class_exists(MyProfileComponent::class)) {
+            \Livewire\Livewire::component('audiofeedback.sound-settings', Livewire\SoundSettings::class);
+        }
     }
 
     /**

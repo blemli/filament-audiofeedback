@@ -4,8 +4,11 @@ use Blemli\AudioFeedback\AudioFeedbackPlugin;
 use Blemli\AudioFeedback\Models\AudioFeedbackSetting;
 use Blemli\AudioFeedback\MuteTogglePosition;
 use Filament\Notifications\Notification;
+use Filament\Panel;
+use Filament\PanelRegistry;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Auth\Events\Login;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Cookie;
 
@@ -146,6 +149,32 @@ it('keeps the breezy profile section opt-in', function () {
     config()->set('audiofeedback.breezy_profile_section', true);
 
     expect(AudioFeedbackPlugin::make()->hasBreezyProfileSection())->toBeTrue();
+});
+
+it('guards the breezy profile section per user', function () {
+    app(PanelRegistry::class)->register(Panel::make()->id('testing')->default());
+
+    $plugin = AudioFeedbackPlugin::make()->breezyProfileSection(
+        fn (?Authenticatable $user): bool => $user?->getAuthIdentifier() === 1,
+    );
+
+    // A closure counts as enabled for registration, decided per user later.
+    expect($plugin->hasBreezyProfileSection())->toBeTrue()
+        ->and($plugin->shouldShowBreezyProfileSection())->toBeFalse(); // guest
+
+    $this->loadLaravelMigrations();
+
+    $user = User::forceCreate([
+        'name' => 'Dr. Mausiavelli',
+        'email' => 'mouse@example.com',
+        'password' => bcrypt('cheese'),
+    ]);
+
+    $this->actingAs($user);
+
+    expect($plugin->shouldShowBreezyProfileSection())->toBeTrue()
+        ->and(AudioFeedbackPlugin::make()->breezyProfileSection(false)->shouldShowBreezyProfileSection())->toBeFalse()
+        ->and(AudioFeedbackPlugin::make()->breezyProfileSection()->shouldShowBreezyProfileSection())->toBeTrue();
 });
 
 it('persists per-user settings through the endpoint', function () {

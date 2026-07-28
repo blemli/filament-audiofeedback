@@ -12,6 +12,7 @@ return [
         'default' => 'Predeterminado (:sound)',
         'off' => 'Desactivado',
         'reset' => 'Restablecer',
+        'duplicate' => 'Mismo sonido que: :events',
     ],
 
     'events' => [

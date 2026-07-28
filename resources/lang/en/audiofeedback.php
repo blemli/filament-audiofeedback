@@ -12,6 +12,7 @@ return [
         'default' => 'Default (:sound)',
         'off' => 'Off',
         'reset' => 'Reset',
+        'duplicate' => 'Same tune as: :events',
     ],
 
     'events' => [
