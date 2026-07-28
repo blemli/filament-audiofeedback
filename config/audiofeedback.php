@@ -59,6 +59,10 @@ return [
         'drag' => 'press',
         'drop' => 'release',
 
+        // A record being deleted (delete & force-delete actions, incl.
+        // bulk); replaces the success sound of their notification.
+        'delete' => 'droplet',
+
     ],
 
 ];

@@ -28,5 +28,6 @@ return [
         'logout' => 'Logout',
         'drag' => 'Picking up a sortable item',
         'drop' => 'Dropping a sortable item',
+        'delete' => 'Deleting a record',
     ],
 ];

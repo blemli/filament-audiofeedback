@@ -305,7 +305,8 @@ function handleNotification(element) {
     }
 
     if (override) {
-        playSound(override)
+        // 'event:delete' → play whatever the delete event resolves to.
+        override.startsWith('event:') ? cue(override.slice('event:'.length)) : playSound(override)
 
         return
     }

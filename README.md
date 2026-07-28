@@ -48,6 +48,7 @@ Each event maps to the Cuelume sound designed for that exact moment:
 | Logout | `droplet` | Single note gliding down |
 | Drag (grab a sortable item) | `press` | Dull muted knock |
 | Drop (release it) | `release` | Brighter springy tick |
+| Record deleted | `delete` → `droplet` | Single note gliding down |
 
 ## Configuration
 
@@ -125,7 +126,14 @@ Notification::make()
     ->title('Autosaved')
     ->silent() // no sound for this one
     ->send();
+
+Notification::make()
+    ->title('Gone')
+    ->soundEvent('delete') // play a configured event's sound instead
+    ->send();
 ```
+
+Delete and force-delete actions (including bulk) automatically use the `delete` event's sound for their success notification instead of the generic success chime.
 
 ## Mute button
 

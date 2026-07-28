@@ -2,6 +2,11 @@
 
 All notable changes to `Filament AudioFeedback` will be documented in this file.
 
+## 1.1.0 - 2026-07-28
+
+- New `delete` event (default: `droplet`): delete and force-delete actions — including bulk — play it through their success notification instead of the generic success chime
+- New `Notification::make()->soundEvent('...')` macro to play a configured event's sound (respecting config, fluent and per-user overrides) on any notification
+
 ## 1.0.0 - 2026-07-28
 
 Initial release.

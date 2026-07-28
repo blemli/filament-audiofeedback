@@ -107,6 +107,18 @@ it('queues a notification sound override cookie', function () {
         ->toMatchArray(['my-notification' => 'sparkle']);
 });
 
+it('routes delete action notifications through the delete event', function () {
+    Notification::make('event-notification')->soundEvent('delete');
+
+    $cookie = collect(Cookie::getQueuedCookies())->firstWhere(
+        fn ($cookie) => $cookie->getName() === 'audiofeedback_notification_sounds',
+    );
+
+    expect(config('audiofeedback.sounds.delete'))->toBe('droplet')
+        ->and(json_decode($cookie->getValue(), associative: true))
+        ->toMatchArray(['event-notification' => 'event:delete']);
+});
+
 it('marks silent notifications as off', function () {
     Notification::make('quiet-notification')->silent();
 

@@ -4,6 +4,11 @@ namespace Blemli\AudioFeedback;
 
 use Blemli\AudioFeedback\Http\SaveSettingsController;
 use Closure;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Notifications\Notification;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
@@ -65,7 +70,33 @@ class AudioFeedbackServiceProvider extends PackageServiceProvider
         ]);
 
         static::registerNotificationMacros();
+        static::registerDeleteCues();
         $this->registerAuthCues();
+    }
+
+    /**
+     * Delete (and force-delete) actions swap their success notification's
+     * sound for the 'delete' event, so deletions get their own cue while
+     * still honoring config, fluent and per-user overrides.
+     */
+    protected static function registerDeleteCues(): void
+    {
+        $actionClasses = [
+            DeleteAction::class,
+            DeleteBulkAction::class,
+            ForceDeleteAction::class,
+            ForceDeleteBulkAction::class,
+        ];
+
+        foreach ($actionClasses as $actionClass) {
+            $actionClass::configureUsing(fn (Action $action): Action => $action->successNotification(
+                function (Notification $notification): Notification {
+                    static::queueNotificationSound($notification->getId(), 'event:delete');
+
+                    return $notification;
+                },
+            ));
+        }
     }
 
     /**
@@ -84,6 +115,14 @@ class AudioFeedbackServiceProvider extends PackageServiceProvider
 
         Notification::macro('silent', Closure::bind(function (): Notification {
             AudioFeedbackServiceProvider::queueNotificationSound($this->getId(), 'off');
+
+            return $this;
+        }, null, Notification::class));
+
+        // Plays a configured event's sound (respecting overrides) instead of
+        // a hardcoded one, e.g. ->soundEvent('delete').
+        Notification::macro('soundEvent', Closure::bind(function (string $event): Notification {
+            AudioFeedbackServiceProvider::queueNotificationSound($this->getId(), 'event:' . $event);
 
             return $this;
         }, null, Notification::class));
