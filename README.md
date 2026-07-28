@@ -166,6 +166,16 @@ Each user gets a mute switch, a volume slider (with a marker and reset for the p
 
 Choices are saved to the `audiofeedback_settings` table (the migration ships with the package — just run `php artisan migrate`) via a small authenticated endpoint, so they follow the user across browsers. Guests and apps without the table gracefully fall back to `localStorage`.
 
+## Translations
+
+Ships in English, German, French, Italian and Spanish (`en`, `de`, `fr`, `it`, `es`) — the mute button and the profile section follow your app's locale automatically. To adjust strings or add a locale, publish the language files:
+
+```bash
+php artisan vendor:publish --tag="audiofeedback-translations"
+```
+
+The Cuelume sound names themselves (chime, sparkle, …) stay untranslated on purpose — they're identifiers, not copy.
+
 ## Extras
 - **Reduced motion** — users with the OS-level "reduce motion" accessibility preference start muted; an explicit unmute (or saved per-user setting) still wins. Opt out of the hint with `->ignoreReducedMotion()` or `'ignore_reduced_motion' => true`.
 - **Your own sounds** — the script also honors plain Cuelume attributes in your views (`<button data-cuelume-press>`), and exposes `window.audiofeedback.cue('toggle')` / `window.audiofeedback.play('sparkle')` for custom JS.
