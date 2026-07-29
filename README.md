@@ -188,7 +188,17 @@ The Cuelume sound names themselves (chime, sparkle, …) stay untranslated on pu
 - **Reduced motion** — users with the OS-level "reduce motion" accessibility preference start muted; an explicit unmute (or saved per-user setting) still wins. Opt out of the hint with `->ignoreReducedMotion()` or `'ignore_reduced_motion' => true`.
 - **Your own sounds** — the script also honors plain Cuelume attributes in your views (`<button data-cuelume-press>`), and exposes `window.audiofeedback.cue('toggle')` / `window.audiofeedback.play('sparkle')` for custom JS.
 - **Autoplay policy** — browsers block audio before the first user interaction on a page. Cues that arrive earlier (e.g. right after the login redirect) are held and played on the first click or keypress.
-  
+
+## Uninstalling
+
+Changed your mind? One command cleans up every published trace — config, views, translations, compiled assets, the migration and the `audiofeedback_settings` table (each deletion asks first, or pass `--force`):
+
+```bash
+php artisan audiofeedback:uninstall
+```
+
+It finishes with a checklist of the things only you can do: unregister `AudioFeedbackPlugin::make()` from your panel provider(s), drop any `configureUsing()` calls and notification macros, remove `AUDIOFEEDBACK_ENABLED` from `.env`, then `composer remove blemli/filament-audiofeedback` and `php artisan optimize:clear`. It even points out which of your files still mention audiofeedback.
+
 ## Testing
 
 ```bash

@@ -2,6 +2,7 @@
 
 namespace Blemli\AudioFeedback;
 
+use Blemli\AudioFeedback\Commands\UninstallCommand;
 use Blemli\AudioFeedback\Http\SaveSettingsController;
 use Closure;
 use Filament\Actions\Action;
@@ -43,6 +44,7 @@ class AudioFeedbackServiceProvider extends PackageServiceProvider
             ->hasTranslations()
             ->hasMigration('create_audiofeedback_settings_table')
             ->runsMigrations()
+            ->hasCommand(UninstallCommand::class)
             ->hasInstallCommand(function (InstallCommand $command) {
                 $command
                     ->publishConfigFile()
